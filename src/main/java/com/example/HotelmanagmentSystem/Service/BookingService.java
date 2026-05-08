@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class BookingService {
 
-    @Autowired
-    private EmailService emailService;
+
+    private final EmailService emailService;
 
 
 
@@ -78,13 +78,17 @@ public class BookingService {
         booking.setUser(user);
         booking.setRoom(room);
 
-        Booking savedBooking = bookingRepository.save(booking);
 
+    try{
         emailService.sendBookingMail(
                 user.getEmail(),
                 user.getName(),
                 room.getRoomNumber()
         );
+    } catch (Exception e) {
+        System.out.println("Email send faild: "+e.getMessage());
+    }
+
 
         return BookingMapper.toResponse(bookingRepository.save(booking));
     }
